@@ -19,7 +19,7 @@ class CardWid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final databaseRef = FirebaseDatabase.instance.ref('https://console.firebase.google.com/project/balanced-meal-26htnc/firestore/databases/-default-/data/~2Fcarbs~2F1');
+    final databaseRef = FirebaseDatabase.instance.ref();
     databaseRef.once().then((DatabaseEvent event) {
       // Use event.snapshot.value
     });
