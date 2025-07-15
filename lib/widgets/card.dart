@@ -1,5 +1,7 @@
+import 'package:balanced_meal/widgets/counter_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CardWid extends StatelessWidget {
   final String itemId;
@@ -34,14 +36,14 @@ class CardWid extends StatelessWidget {
 
         return Container(
           margin: EdgeInsets.only(right: 16),
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Color(0xffEAECF0)),
           ),
           width: 200,
-          height: 180,
+          height: 200,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -83,34 +85,25 @@ class CardWid extends StatelessWidget {
                   ],
                 ),
               ),
-              Spacer(),
               Container(
-                height: 35,
+                height: 40,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '\$${price.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                        color: Color(0xffF25700),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // Add to cart functionality
-                      },
+                    Container(
+                      width: 50.w,
                       child: Text(
-                        'Add',
+                        '\$${price.toStringAsFixed(2)}',
                         style: TextStyle(
-                          color: Color(0xffF25700),
                           fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                          color: Color(0xffF25700),
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
+                    // AddButton(),
+                    CounterButton(),
                   ],
                 ),
               ),

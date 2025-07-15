@@ -1,3 +1,4 @@
+import 'package:balanced_meal/widgets/bottom_widget.dart';
 import 'package:balanced_meal/widgets/card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,6 @@ class _CreateYourOrderState extends State<CreateYourOrder> {
                     Text(
                       'Vegetables',
                       style: TextStyle(
-                        fontFamily: 'Poppins',
                         fontWeight: FontWeight.w500,
                         fontSize: 20,
                       ),
@@ -82,7 +82,6 @@ class _CreateYourOrderState extends State<CreateYourOrder> {
                     Text(
                       'Meats',
                       style: TextStyle(
-                        fontFamily: 'Poppins',
                         fontWeight: FontWeight.w500,
                         fontSize: 20,
                       ),
@@ -122,7 +121,6 @@ class _CreateYourOrderState extends State<CreateYourOrder> {
                     Text(
                       'Carbs',
                       style: TextStyle(
-                        fontFamily: 'Poppins',
                         fontWeight: FontWeight.w500,
                         fontSize: 20,
                       ),
@@ -159,10 +157,15 @@ class _CreateYourOrderState extends State<CreateYourOrder> {
                         },
                       ),
                     ),
+                    Container(height: 130.h),
                   ],
                 ),
               ),
             ),
+          ),
+          Positioned(
+            bottom: 0,
+            child: BottomWidget(btnTxt: 'Place Order', calories: 20, price: 12),
           ),
         ],
       ),

@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Balanced Meal',
           theme: ThemeData(
+            fontFamily: 'Poppins',
             colorScheme: ColorScheme.fromSeed(
               seedColor: const Color(0x00F25700),
             ),
