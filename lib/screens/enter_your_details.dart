@@ -1,18 +1,20 @@
+import 'package:balanced_meal/provider/needed_calories_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../core/routing/routes.dart';
 
-class Enteryourdetails extends StatefulWidget {
+class Enteryourdetails extends ConsumerStatefulWidget {
   const Enteryourdetails({super.key});
 
   @override
-  State<Enteryourdetails> createState() {
+  ConsumerState<Enteryourdetails> createState() {
     return _EnteryourdetailsState();
   }
 }
 
-class _EnteryourdetailsState extends State<Enteryourdetails> {
+class _EnteryourdetailsState extends ConsumerState<Enteryourdetails> {
   String? selectedGender;
   final TextEditingController weightController = TextEditingController();
   final TextEditingController heightController = TextEditingController();
@@ -216,6 +218,14 @@ class _EnteryourdetailsState extends State<Enteryourdetails> {
                   onPressed: valid()
                       ? () {
                           Navigator.pushNamed(context, Routes.order);
+                          ref
+                              .read(neededCaloriesProvider.notifier)
+                              .neededCalories(
+                                selectedGender!,
+                                int.parse(ageController.text),
+                                double.parse(weightController.text),
+                                double.parse(heightController.text),
+                              );
                         }
                       : null,
                   style: ElevatedButton.styleFrom(

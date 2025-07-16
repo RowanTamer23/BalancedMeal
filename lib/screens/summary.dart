@@ -19,6 +19,7 @@ class _SummaryState extends State<Summary> {
 
   @override
   Widget build(BuildContext context) {
+    int count;
     return Scaffold(
       backgroundColor: Color(0xffFBFBFB),
       appBar: AppBar(
@@ -65,6 +66,7 @@ class _SummaryState extends State<Summary> {
                                   (data['calories'] as num?)?.toDouble() ?? 0.0,
                               imageUrl: data['image'] ?? '',
                               foodName: data['food_name'] ?? '',
+                              count = 1,
                             );
                           },
                         );

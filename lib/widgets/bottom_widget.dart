@@ -1,8 +1,11 @@
 import 'package:balanced_meal/core/routing/routes.dart';
+import 'package:balanced_meal/provider/added_provider.dart';
+import 'package:balanced_meal/provider/needed_calories_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class BottomWidget extends StatefulWidget {
+class BottomWidget extends ConsumerStatefulWidget {
   const BottomWidget({
     super.key,
     required this.calories,
@@ -14,16 +17,19 @@ class BottomWidget extends StatefulWidget {
   final String btnTxt;
 
   @override
-  State<BottomWidget> createState() {
+  ConsumerState<BottomWidget> createState() {
     return _BottomWidgetState();
   }
 }
 
-class _BottomWidgetState extends State<BottomWidget> {
+class _BottomWidgetState extends ConsumerState<BottomWidget> {
   bool isActive = false;
 
   @override
   Widget build(BuildContext context) {
+    final NeededCalories = ref.watch(neededCaloriesProvider);
+    final addminusCal = ref.watch(addMinusCalProvider);
+    final addMinusPrice = ref.watch(addMinusPriceProvider);
     return Container(
       decoration: BoxDecoration(color: Colors.white),
       padding: EdgeInsets.all(20),
@@ -40,7 +46,7 @@ class _BottomWidgetState extends State<BottomWidget> {
                 style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
               ),
               Text(
-                '${widget.calories.toString()} Cal out of ${widget.calories.toString()} Cal',
+                ' ${addminusCal} Cal out of ${NeededCalories} Cal',
                 style: TextStyle(fontSize: 14, color: Color(0xff959595)),
               ),
             ],
@@ -53,7 +59,7 @@ class _BottomWidgetState extends State<BottomWidget> {
                 style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
               ),
               Text(
-                '\$${widget.price.toString()}',
+                '\$ ${addMinusPrice}',
                 style: TextStyle(fontSize: 16, color: Color(0xffF25700)),
               ),
             ],

@@ -7,8 +7,10 @@ class SummaryCard extends StatelessWidget {
   final String foodName;
   final double calories;
   final double price;
+  final int count;
 
-  const SummaryCard({
+  const SummaryCard(
+    this.count, {
     super.key,
     required this.imageUrl,
     required this.foodName,
@@ -50,7 +52,10 @@ class SummaryCard extends StatelessWidget {
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [Text(' 24${price.toStringAsFixed(2)}'), CounterButton()],
+            children: [
+              Text(' ${price.toStringAsFixed(2)}'),
+              CounterButton(price: price, calories: calories),
+            ],
           ),
         ],
       ),

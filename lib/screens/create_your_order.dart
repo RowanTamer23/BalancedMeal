@@ -2,18 +2,19 @@ import 'package:balanced_meal/widgets/bottom_widget.dart';
 import 'package:balanced_meal/widgets/card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CreateYourOrder extends StatefulWidget {
+class CreateYourOrder extends ConsumerStatefulWidget {
   const CreateYourOrder({super.key});
 
   @override
-  State<StatefulWidget> createState() {
+  ConsumerState<ConsumerStatefulWidget> createState() {
     return _CreateYourOrderState();
   }
 }
 
-class _CreateYourOrderState extends State<CreateYourOrder> {
+class _CreateYourOrderState extends ConsumerState<CreateYourOrder> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,9 +1,10 @@
 import 'package:balanced_meal/widgets/counter_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CardWid extends StatelessWidget {
+class CardWid extends ConsumerStatefulWidget {
   final String itemId;
   final String collectionName;
 
@@ -14,11 +15,16 @@ class CardWid extends StatelessWidget {
   });
 
   @override
+  ConsumerState<CardWid> createState() => _CardWidState();
+}
+
+class _CardWidState extends ConsumerState<CardWid> {
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
-          .collection(collectionName)
-          .doc(itemId)
+          .collection(widget.collectionName)
+          .doc(widget.itemId)
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -33,6 +39,7 @@ class CardWid extends StatelessWidget {
         final foodName = data['food_name'] as String?;
         final calories = data['calories']?.toDouble() ?? 0.0;
         final price = data['price']?.toDouble() ?? 0.0;
+        final count = 1;
 
         return Container(
           margin: EdgeInsets.only(right: 16),
@@ -91,7 +98,7 @@ class CardWid extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      width: 50.w,
+                      width: 45.w,
                       child: Text(
                         '\$${price.toStringAsFixed(2)}',
                         style: TextStyle(
@@ -102,8 +109,8 @@ class CardWid extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // AddButton(),
-                    CounterButton(),
+                    // AddButtonn(price: price, calories: calories),
+                    CounterButton(price: price, calories: calories),
                   ],
                 ),
               ),
