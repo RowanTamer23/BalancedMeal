@@ -219,7 +219,7 @@ class _EnteryourdetailsState extends ConsumerState<Enteryourdetails> {
                       ? () {
                           Navigator.pushNamed(context, Routes.order);
                           ref
-                              .read(neededCaloriesProvider.notifier)
+                              .read(NeededCaloriesProvider.notifier)
                               .neededCalories(
                                 selectedGender!,
                                 int.parse(ageController.text),

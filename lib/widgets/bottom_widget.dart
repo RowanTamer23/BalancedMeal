@@ -23,13 +23,20 @@ class BottomWidget extends ConsumerStatefulWidget {
 }
 
 class _BottomWidgetState extends ConsumerState<BottomWidget> {
-  bool isActive = false;
-
   @override
   Widget build(BuildContext context) {
-    final NeededCalories = ref.watch(neededCaloriesProvider);
+    final NeededCalories = ref.watch(NeededCaloriesProvider);
     final addminusCal = ref.watch(addMinusCalProvider);
     final addMinusPrice = ref.watch(addMinusPriceProvider);
+
+    final isActiveProvider = Provider<bool>((ref) {
+      final neededCalories = ref.watch(NeededCaloriesProvider);
+      final addMinusCal = ref.watch(addMinusCalProvider);
+      return addMinusCal >= 0.9 * neededCalories &&
+          addMinusCal <= 1.1 * neededCalories;
+    });
+    bool isActive = ref.watch(isActiveProvider);
+
     return Container(
       decoration: BoxDecoration(color: Colors.white),
       padding: EdgeInsets.all(20),
@@ -74,7 +81,7 @@ class _BottomWidgetState extends ConsumerState<BottomWidget> {
             ),
             child: TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, Routes.summary);
+                isActive ? Navigator.pushNamed(context, Routes.summary) : null;
               },
               child: Text(
                 widget.btnTxt,

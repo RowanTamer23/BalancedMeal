@@ -14,6 +14,6 @@ class NeededCaloriesNotifier extends StateNotifier<num> {
   }
 }
 
-final neededCaloriesProvider = StateNotifierProvider((ref) {
+final NeededCaloriesProvider = StateNotifierProvider((ref) {
   return NeededCaloriesNotifier();
 });
