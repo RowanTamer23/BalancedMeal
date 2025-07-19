@@ -1,20 +1,14 @@
 import 'package:balanced_meal/provider/added_provider.dart';
+import 'package:balanced_meal/provider/firebase_data_provider.dart';
 import 'package:balanced_meal/provider/list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddButtonn extends ConsumerStatefulWidget {
-  final double calories;
-  final double price;
-  final String foodName;
+  final FoodItem foodItem;
 
-  const AddButtonn({
-    super.key,
-    required this.calories,
-    required this.price,
-    required this.foodName,
-  });
+  const AddButtonn({super.key, required this.foodItem});
 
   @override
   ConsumerState<AddButtonn> createState() => _AddButtonnState();
@@ -36,14 +30,14 @@ class _AddButtonnState extends ConsumerState<AddButtonn> {
           onPressed: () {
             ref
                 .watch(addMinusCalProvider.notifier)
-                .addMinusCal(widget.calories, "Add");
+                .addMinusCal(widget.foodItem.calories, "Add");
             ref
                 .watch(addMinusPriceProvider.notifier)
-                .addMinusPrice(widget.price, "Add");
+                .addMinusPrice(widget.foodItem.price, "Add");
 
             ref
                 .read(OrderListProvider.notifier)
-                .OrderList(widget.foodName, true);
+                .OrderList(widget.foodItem, true);
           },
           child: Text(
             'Add',

@@ -1,23 +1,19 @@
+import 'package:balanced_meal/provider/firebase_data_provider.dart';
 import 'package:balanced_meal/widgets/counter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class SummaryCard extends StatelessWidget {
-  final String imageUrl;
-  final String foodName;
-  final double calories;
-  final double price;
+class SummaryCardWid extends StatefulWidget {
+  final FoodItem foodItem;
   final int count;
 
-  const SummaryCard(
-    this.count, {
-    super.key,
-    required this.imageUrl,
-    required this.foodName,
-    required this.calories,
-    required this.price,
-  });
+  const SummaryCardWid(this.count, {super.key, required this.foodItem});
 
+  @override
+  State<SummaryCardWid> createState() => _SummaryCardState();
+}
+
+class _SummaryCardState extends State<SummaryCardWid> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,7 +30,7 @@ class SummaryCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
                   image: DecorationImage(
-                    image: NetworkImage(imageUrl),
+                    image: NetworkImage(widget.foodItem.imageUrl),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -44,8 +40,8 @@ class SummaryCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(foodName),
-                  Text('${calories.toStringAsFixed(0)} cal'),
+                  Text(widget.foodItem.foodName),
+                  Text('${widget.foodItem.calories.toStringAsFixed(0)} cal'),
                 ],
               ),
             ],
@@ -53,13 +49,8 @@ class SummaryCard extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(' ${price.toStringAsFixed(2)}'),
-              CounterButton(
-                price: price,
-                calories: calories,
-                // counter: count,
-                foodName: foodName,
-              ),
+              Text(' ${widget.foodItem.price.toStringAsFixed(2)}'),
+              CounterButton(foodItem: widget.foodItem),
             ],
           ),
         ],

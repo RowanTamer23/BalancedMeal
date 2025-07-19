@@ -1,25 +1,29 @@
+import 'package:balanced_meal/provider/firebase_data_provider.dart';
+import 'package:balanced_meal/provider/list_provider.dart';
 import 'package:balanced_meal/widgets/bottom_widget.dart';
 import 'package:balanced_meal/widgets/summary_card.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class Summary extends StatefulWidget {
+class Summary extends ConsumerStatefulWidget {
+  // final String collection;
+
+  const Summary({
+    // required this.collection,
+    super.key,
+  });
+
   @override
-  State<Summary> createState() => _SummaryState();
+  ConsumerState<Summary> createState() => _SummaryState();
 }
 
-class _SummaryState extends State<Summary> {
-  // Example: Replace with your actual selected items logic
-  final List<Map<String, String>> selectedItems = [
-    {'collection': 'vegetables', 'id': 'docId1'},
-    {'collection': 'meat', 'id': 'docId2'},
-    {'collection': 'carbs', 'id': 'docId3'},
-  ];
-
+class _SummaryState extends ConsumerState<Summary> {
   @override
   Widget build(BuildContext context) {
-    int count;
+    final orderList = ref.watch(OrderListProvider);
+    final allFoodItemsAsync = ref.watch(StreamAllFoodItemsProvider);
+
     return Scaffold(
       backgroundColor: Color(0xffFBFBFB),
       appBar: AppBar(
@@ -44,33 +48,41 @@ class _SummaryState extends State<Summary> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ...selectedItems.map((item) {
-                        return FutureBuilder<DocumentSnapshot>(
-                          future: FirebaseFirestore.instance
-                              .collection(item['collection']!)
-                              .doc(item['id']!)
-                              .get(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(child: CircularProgressIndicator());
-                            }
-                            if (!snapshot.hasData || !snapshot.data!.exists) {
-                              return SizedBox(); // or show an error
-                            }
-                            final data =
-                                snapshot.data!.data() as Map<String, dynamic>;
-                            return SummaryCard(
-                              price: (data['price'] as num?)?.toDouble() ?? 0.0,
-                              calories:
-                                  (data['calories'] as num?)?.toDouble() ?? 0.0,
-                              imageUrl: data['image'] ?? '',
-                              foodName: data['food_name'] ?? '',
-                              count = 1,
-                            );
-                          },
-                        );
-                      }).toList(),
+                      allFoodItemsAsync.when(
+                        data: (allFoodItems) {
+                          // Get unique food items from order list
+                          final uniqueFoodItems = <String, FoodItem>{};
+                          final itemCounts = <String, int>{};
+
+                          for (final orderItem in orderList) {
+                            final key =
+                                '${orderItem.foodName}_${orderItem.collectionName}';
+                            uniqueFoodItems[key] = orderItem;
+                            itemCounts[key] = (itemCounts[key] ?? 0) + 1;
+                          }
+
+                          // Create summary items with counts
+                          final summaryItems = uniqueFoodItems.entries.map((
+                            entry,
+                          ) {
+                            final foodItem = entry.value;
+                            final count = itemCounts[entry.key]!;
+                            return {'item': foodItem, 'count': count};
+                          }).toList();
+
+                          return Column(
+                            children: summaryItems.map((itemData) {
+                              final foodItem = itemData['item'] as FoodItem;
+                              final count = itemData['count'] as int;
+                              return SummaryCardWid(count, foodItem: foodItem);
+                            }).toList(),
+                          );
+                        },
+                        loading: () =>
+                            Center(child: CircularProgressIndicator()),
+                        error: (error, stack) =>
+                            Center(child: Text('Error: $error')),
+                      ),
                       Container(height: 130.h),
                     ],
                   ),

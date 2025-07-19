@@ -1,7 +1,7 @@
+import 'package:balanced_meal/provider/firebase_data_provider.dart';
 import 'package:balanced_meal/provider/list_provider.dart';
 import 'package:balanced_meal/widgets/add_button.dart';
 import 'package:balanced_meal/widgets/counter_button.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,27 +24,32 @@ class _CardWidState extends ConsumerState<CardWid> {
   @override
   Widget build(BuildContext context) {
     final orderList = ref.watch(OrderListProvider);
+    final foodItemsAsync = ref.watch(
+      StreamFoodItemsProvider(widget.collectionName),
+    );
 
-    return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection(widget.collectionName)
-          .doc(widget.itemId)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (!snapshot.hasData || !snapshot.data!.exists) {
-          return Center(child: Text('No data found'));
-        }
+    return foodItemsAsync.when(
+      data: (foodItems) {
+        final foodItem = foodItems.firstWhere(
+          (item) => item.id == widget.itemId,
+          orElse: () => FoodItem(
+            id: '',
+            foodName: 'Not Found',
+            calories: 0.0,
+            price: 0.0,
+            imageUrl: '',
+            collectionName: '',
+          ),
+        );
 
-        final data = snapshot.data!.data() as Map<String, dynamic>;
-        final imageUrl = data['image'] as String?;
-        final foodName1 = data['food_name'] as String?;
-        final calories = data['calories']?.toDouble() ?? 0.0;
-        final price = data['price']?.toDouble() ?? 0.0;
-
-        bool isAdded = orderList.contains(foodName1);
+        int counted = orderList
+            .where(
+              (item) =>
+                  item.foodName == foodItem.foodName &&
+                  item.collectionName == foodItem.collectionName,
+            )
+            .length;
+        bool isAdded = counted > 0;
 
         return Container(
           margin: EdgeInsets.only(right: 16),
@@ -60,14 +65,14 @@ class _CardWidState extends ConsumerState<CardWid> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (imageUrl != null)
+              if (foodItem.imageUrl.isNotEmpty)
                 Container(
                   height: 70,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4),
                     image: DecorationImage(
-                      image: NetworkImage(imageUrl),
+                      image: NetworkImage(foodItem.imageUrl),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -79,7 +84,7 @@ class _CardWidState extends ConsumerState<CardWid> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      foodName1 ?? 'Loading...',
+                      foodItem.foodName,
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w600,
@@ -87,7 +92,7 @@ class _CardWidState extends ConsumerState<CardWid> {
                       ),
                     ),
                     Text(
-                      '${calories.toStringAsFixed(0)} cal',
+                      '${foodItem.calories.toStringAsFixed(0)} cal',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 12,
@@ -105,7 +110,7 @@ class _CardWidState extends ConsumerState<CardWid> {
                     Container(
                       width: 45.w,
                       child: Text(
-                        '\$${price.toStringAsFixed(2)}',
+                        '\$${foodItem.price.toStringAsFixed(2)}',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 12,
@@ -114,19 +119,9 @@ class _CardWidState extends ConsumerState<CardWid> {
                         ),
                       ),
                     ),
-
                     isAdded
-                        ? CounterButton(
-                            price: price,
-                            calories: calories,
-                            // counter: count,
-                            foodName: foodName1.toString(),
-                          )
-                        : AddButtonn(
-                            price: price,
-                            calories: calories,
-                            foodName: foodName1.toString(),
-                          ),
+                        ? CounterButton(foodItem: foodItem)
+                        : AddButtonn(foodItem: foodItem),
                   ],
                 ),
               ),
@@ -134,6 +129,16 @@ class _CardWidState extends ConsumerState<CardWid> {
           ),
         );
       },
+      loading: () => Container(
+        width: 200,
+        height: 200,
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stack) => Container(
+        width: 200,
+        height: 200,
+        child: Center(child: Text('Error: $error')),
+      ),
     );
   }
 }
