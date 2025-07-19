@@ -1,3 +1,5 @@
+import 'package:balanced_meal/provider/list_provider.dart';
+import 'package:balanced_meal/widgets/add_button.dart';
 import 'package:balanced_meal/widgets/counter_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,8 @@ class CardWid extends ConsumerStatefulWidget {
 class _CardWidState extends ConsumerState<CardWid> {
   @override
   Widget build(BuildContext context) {
+    final orderList = ref.watch(OrderListProvider);
+
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection(widget.collectionName)
@@ -36,10 +40,11 @@ class _CardWidState extends ConsumerState<CardWid> {
 
         final data = snapshot.data!.data() as Map<String, dynamic>;
         final imageUrl = data['image'] as String?;
-        final foodName = data['food_name'] as String?;
+        final foodName1 = data['food_name'] as String?;
         final calories = data['calories']?.toDouble() ?? 0.0;
         final price = data['price']?.toDouble() ?? 0.0;
-        final count = 1;
+
+        bool isAdded = orderList.contains(foodName1);
 
         return Container(
           margin: EdgeInsets.only(right: 16),
@@ -74,7 +79,7 @@ class _CardWidState extends ConsumerState<CardWid> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      foodName ?? 'Loading...',
+                      foodName1 ?? 'Loading...',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w600,
@@ -109,8 +114,19 @@ class _CardWidState extends ConsumerState<CardWid> {
                         ),
                       ),
                     ),
-                    // AddButtonn(price: price, calories: calories),
-                    CounterButton(price: price, calories: calories),
+
+                    isAdded
+                        ? CounterButton(
+                            price: price,
+                            calories: calories,
+                            // counter: count,
+                            foodName: foodName1.toString(),
+                          )
+                        : AddButtonn(
+                            price: price,
+                            calories: calories,
+                            foodName: foodName1.toString(),
+                          ),
                   ],
                 ),
               ),

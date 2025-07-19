@@ -1,4 +1,5 @@
 import 'package:balanced_meal/provider/added_provider.dart';
+import 'package:balanced_meal/provider/list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,8 +7,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class CounterButton extends ConsumerStatefulWidget {
   final double calories;
   final double price;
+  // final int counter;
+  final String foodName;
 
-  const CounterButton({super.key, required this.calories, required this.price});
+  const CounterButton({
+    super.key,
+    required this.calories,
+    required this.price,
+    // required this.counter,
+    required this.foodName,
+  });
 
   @override
   ConsumerState<CounterButton> createState() {
@@ -18,10 +27,12 @@ class CounterButton extends ConsumerStatefulWidget {
 class _CounterButtonState extends ConsumerState<CounterButton> {
   @override
   Widget build(BuildContext context) {
+    final orderList = ref.watch(OrderListProvider);
+    int counted = orderList.where((item) => item == widget.foodName).length;
+
     return Center(
       child: Container(
         width: 110.w,
-
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -37,6 +48,9 @@ class _CounterButtonState extends ConsumerState<CounterButton> {
                   ref
                       .watch(addMinusPriceProvider.notifier)
                       .addMinusPrice(widget.price, 'Add');
+                  ref
+                      .read(OrderListProvider.notifier)
+                      .OrderList(widget.foodName, true);
                 },
                 icon: Icon(
                   Icons.add_circle,
@@ -46,7 +60,7 @@ class _CounterButtonState extends ConsumerState<CounterButton> {
               ),
               // ),
             ),
-            Text('1'),
+            Text(counted.toString()),
             Container(
               width: 40.w,
               child: IconButton(
@@ -63,6 +77,9 @@ class _CounterButtonState extends ConsumerState<CounterButton> {
                   ref
                       .watch(addMinusPriceProvider.notifier)
                       .addMinusPrice(widget.price, 'Minus');
+                  ref
+                      .read(OrderListProvider.notifier)
+                      .OrderList(widget.foodName, false);
                 },
                 icon: Icon(
                   Icons.remove_circle,

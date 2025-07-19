@@ -35,6 +35,7 @@ class _BottomWidgetState extends ConsumerState<BottomWidget> {
       return addMinusCal >= 0.9 * neededCalories &&
           addMinusCal <= 1.1 * neededCalories;
     });
+
     bool isActive = ref.watch(isActiveProvider);
 
     return Container(

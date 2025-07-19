@@ -54,7 +54,12 @@ class SummaryCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(' ${price.toStringAsFixed(2)}'),
-              CounterButton(price: price, calories: calories),
+              CounterButton(
+                price: price,
+                calories: calories,
+                // counter: count,
+                foodName: foodName,
+              ),
             ],
           ),
         ],
